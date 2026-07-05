@@ -1,6 +1,7 @@
 <script>
   // 右ペイン: 実行結果（標準出力・エラー・ステータス）。ヘッダに実行ボタンを持つ。
-  let { output = '', status = 'idle', message = '', onrun, busy = false } = $props()
+  // showRun=false のとき（狭い画面ではタブバー側に実行ボタンを置く）ヘッダの実行ボタンは隠す。
+  let { output = '', status = 'idle', message = '', onrun, busy = false, showRun = true } = $props()
 
   // 出力テキストの文字サイズ（Ctrl+マウスホイールで変更）。
   let fontSize = $state(13)
@@ -17,7 +18,9 @@
   <div class="out-head">
     <span class="title">実行結果</span>
     <span class="spacer"></span>
-    <button class="run" onclick={onrun} disabled={busy}>▶ 実行</button>
+    {#if showRun}
+      <button class="run" onclick={onrun} disabled={busy}>▶ 実行</button>
+    {/if}
   </div>
 
   {#if message}

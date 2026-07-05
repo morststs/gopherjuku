@@ -17,7 +17,20 @@
   let leftW = $state(240)
   let rightW = $state(380)
 
+  // 狭い画面（スマホ縦など）では 3 ペイン横並びが破綻するため、タブ切り替えに変える。
+  let narrow = $state(false)
+  let tab = $state('editor') // narrow 時に表示するペイン: lessons | editor | output
+
   const busy = $derived(status === 'running')
+
+  // 画面幅を監視して narrow を切り替える。
+  $effect(() => {
+    const mq = window.matchMedia('(max-width: 720px)')
+    const update = () => (narrow = mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  })
 
   onMount(async () => {
     prewarm() // ブラウザ版: 実行環境(wasm)とレッスンの読み込みを先行開始
@@ -32,9 +45,11 @@
     output = ''
     message = ''
     status = 'idle'
+    if (narrow) tab = 'editor' // レッスンを選んだらエディタへ移動
   }
 
   async function run() {
+    if (narrow) tab = 'output' // 実行したら結果タブへ移動
     status = 'running'
     message = '実行中…'
     output = ''
@@ -73,24 +88,38 @@
   }
 </script>
 
-<div class="app">
-  <!-- 全幅の上部バーは廃止。実行ボタンは実行結果ペインの上（Output のヘッダ）だけに置き、
-       左・中央ペインは最上部から始める。 -->
-  <div class="panes" style="grid-template-columns: {leftW}px 6px 1fr 6px {rightW}px;">
-    <aside class="pane left">
+<div class="app" class:narrow>
+  <!-- 広い画面: 3 ペイン横並び（実行ボタンは実行結果ペインのヘッダ）。
+       狭い画面: タブで 1 ペインずつ全画面表示（実行ボタンはタブバー）。 -->
+  {#if narrow}
+    <nav class="tabbar">
+      <button class="tab" class:active={tab === 'lessons'} onclick={() => (tab = 'lessons')}>レッスン</button>
+      <button class="tab" class:active={tab === 'editor'} onclick={() => (tab = 'editor')}>エディタ</button>
+      <button class="tab" class:active={tab === 'output'} onclick={() => (tab = 'output')}>実行結果</button>
+      <span class="tab-spacer"></span>
+      <button class="tab-run" onclick={run} disabled={busy}>▶ 実行</button>
+    </nav>
+  {/if}
+
+  <div class="panes" style={narrow ? '' : `grid-template-columns: ${leftW}px 6px 1fr 6px ${rightW}px;`}>
+    <aside class="pane left" class:hidden={narrow && tab !== 'lessons'}>
       <LessonTree {categories} {currentPath} onselect={select} />
     </aside>
 
-    <div class="gutter" onpointerdown={(e) => startDrag('left', e)}></div>
+    {#if !narrow}
+      <div class="gutter" onpointerdown={(e) => startDrag('left', e)}></div>
+    {/if}
 
-    <main class="pane center">
+    <main class="pane center" class:hidden={narrow && tab !== 'editor'}>
       <Editor bind:value={source} />
     </main>
 
-    <div class="gutter" onpointerdown={(e) => startDrag('right', e)}></div>
+    {#if !narrow}
+      <div class="gutter" onpointerdown={(e) => startDrag('right', e)}></div>
+    {/if}
 
-    <section class="pane right">
-      <Output {output} {status} {message} onrun={run} {busy} />
+    <section class="pane right" class:hidden={narrow && tab !== 'output'}>
+      <Output {output} {status} {message} onrun={run} {busy} showRun={!narrow} />
     </section>
   </div>
 </div>
@@ -116,5 +145,56 @@
   }
   .gutter:hover {
     background: #0e639c;
+  }
+
+  /* --- 狭い画面（スマホ縦など）: タブ切り替えで 1 ペインずつ全画面 --- */
+  .tabbar {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    background: #323233;
+    border-bottom: 1px solid #444;
+    flex: none;
+  }
+  .tab {
+    height: 100%;
+    padding: 0 14px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #cbd5e1;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .tab.active {
+    color: #fff;
+    border-bottom-color: #16a34a;
+  }
+  .tab-spacer {
+    flex: 1;
+  }
+  .tab-run {
+    margin-right: 8px;
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .tab-run:disabled {
+    opacity: 0.5;
+  }
+  .app.narrow .panes {
+    display: block;
+    position: relative;
+  }
+  .app.narrow .pane {
+    height: 100%;
+  }
+  .pane.hidden {
+    display: none;
   }
 </style>
