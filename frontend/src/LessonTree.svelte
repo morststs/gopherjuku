@@ -2,11 +2,11 @@
   // 左ペイン: カテゴリー → 題 のツリー。カテゴリーはアコーディオンで開閉できる。
   let { categories = [], currentPath = null, onselect } = $props()
 
-  // 折りたたみ状態。collapsed[カテゴリー名] === true で閉じている（既定は開）。
-  let collapsed = $state({})
+  // 開閉状態。opened[カテゴリー名] === true で開いている（既定は閉じ）。
+  let opened = $state({})
 
   function toggle(name) {
-    collapsed = { ...collapsed, [name]: !collapsed[name] }
+    opened = { ...opened, [name]: !opened[name] }
   }
 </script>
 
@@ -16,13 +16,13 @@
     <button
       class="category"
       onclick={() => toggle(cat.name)}
-      aria-expanded={!collapsed[cat.name]}
-      title={collapsed[cat.name] ? '開く' : '閉じる'}
+      aria-expanded={!!opened[cat.name]}
+      title={opened[cat.name] ? '閉じる' : '開く'}
     >
-      <span class="chev" class:closed={collapsed[cat.name]}>▾</span>
+      <span class="chev" class:closed={!opened[cat.name]}>▾</span>
       <span class="cat-name">{cat.name}</span>
     </button>
-    {#if !collapsed[cat.name]}
+    {#if opened[cat.name]}
       {#each cat.lessons as lesson (lesson.path)}
         <button
           class="lesson"
