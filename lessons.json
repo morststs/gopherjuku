@@ -1,0 +1,193 @@
+{
+ "categories": [
+  {
+   "name": "基本",
+   "lessons": [
+    {
+     "category": "基本",
+     "title": "ハローワールド",
+     "path": "1_基本/01 ハローワールド",
+     "source": "// ハローワールド — 最初のプログラム\n//\n// このアプリでは、左のレッスンを選ぶと中央のエディターにコードが表示されます。\n// 右上の「▶ 実行」を押すと、このコードがその場で実行され、\n// 右のペインに実行結果（標準出力）が表示されます。\n//\n// まずはそのまま実行してみましょう。次に \"Hello, Gopherjuku!\" の部分を\n// 好きな文章に書き換えて、もう一度実行してみてください。\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\t// fmt.Println は文字列を 1 行出力します（末尾に自動で改行が付きます）。\n\tfmt.Println(\"Hello, Gopherjuku!\")\n\n\t// Printf は書式を指定して出力します。%d は整数、\\n は改行を表します。\n\tfor i := 1; i \u003c= 3; i++ {\n\t\tfmt.Printf(\"%d 回目のこんにちは\\n\", i)\n\t}\n}\n"
+    },
+    {
+     "category": "基本",
+     "title": "変数と型",
+     "path": "1_基本/02 変数と型",
+     "source": "// 変数と型\n//\n// Go の変数宣言と基本型を見ていきます。値を書き換えて実行し、\n// 出力がどう変わるか試してみてください。\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\t// var で宣言。初期値を省くと「ゼロ値」（int は 0、string は \"\"）になる。\n\tvar age int\n\tvar name string = \"Gopher\"\n\tfmt.Println(\"age(ゼロ値):\", age, \"/ name:\", name)\n\n\t// := は型推論付きの短い宣言（関数の中でだけ使える）。\n\theight := 172.5 // float64 と推論される\n\tactive := true  // bool\n\tfmt.Printf(\"height=%.1f active=%v\\n\", height, active)\n\n\t// 主な基本型\n\tvar i int = -42\n\tvar f float64 = 3.14\n\tvar s string = \"文字列\"\n\tvar r rune = 'あ' // rune は Unicode コードポイント（int32 の別名）\n\tvar b byte = 'A'  // byte は uint8 の別名\n\tfmt.Println(\"int/float/string:\", i, f, s)\n\tfmt.Printf(\"rune %c=%d, byte %c=%d\\n\", r, r, b, b)\n\n\t// 型変換は必ず明示的に書く（暗黙の変換は無い）。\n\tn := 10\n\tx := float64(n) / 3\n\tfmt.Printf(\"%d / 3 = %.3f\\n\", n, x)\n}\n"
+    },
+    {
+     "category": "基本",
+     "title": "定数とiota",
+     "path": "1_基本/03 定数とiota",
+     "source": "// 定数と iota\n//\n// const で定数を宣言します。iota を使うと連番の定数を簡潔に定義できます。\npackage main\n\nimport \"fmt\"\n\n// 単純な定数\nconst Pi = 3.14159\nconst Greeting = \"こんにちは\"\n\n// iota は const ブロック内で 0 から始まり、行ごとに 1 増える。\nconst (\n\tSunday = iota // 0\n\tMonday        // 1\n\tTuesday       // 2\n\tWednesday     // 3\n)\n\n// iota を式に使うと、ビットフラグや単位も簡潔に書ける。\nconst (\n\t_  = iota             // 0 は捨てる\n\tKB = 1 \u003c\u003c (10 * iota) // 1 \u003c\u003c 10\n\tMB                    // 1 \u003c\u003c 20\n\tGB                    // 1 \u003c\u003c 30\n)\n\nfunc main() {\n\tfmt.Println(Greeting, \"Pi =\", Pi)\n\tfmt.Println(\"曜日:\", Sunday, Monday, Tuesday, Wednesday)\n\tfmt.Println(\"KB, MB, GB:\", KB, MB, GB)\n}\n"
+    },
+    {
+     "category": "基本",
+     "title": "演算子",
+     "path": "1_基本/04 演算子",
+     "source": "// 演算子\n//\n// 算術・比較・論理・ビット演算の基本を確認します。\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\ta, b := 17, 5\n\n\t// 算術演算：/ は整数どうしだと整数除算、% は剰余。\n\tfmt.Println(\"和 差 積:\", a+b, a-b, a*b)\n\tfmt.Println(\"商 余り:\", a/b, a%b)\n\n\t// 比較演算：結果は bool。\n\tfmt.Println(\"a\u003eb, a==b:\", a \u003e b, a == b)\n\n\t// 論理演算：\u0026\u0026（かつ）, ||（または）, !（否定）。\n\tt, f := true, false\n\tfmt.Println(\"\u0026\u0026 || !:\", t \u0026\u0026 f, t || f, !t)\n\n\t// ビット演算：\u0026 | ^ \u003c\u003c \u003e\u003e\n\tx, y := 0b1100, 0b1010\n\tfmt.Printf(\"AND=%04b OR=%04b XOR=%04b\\n\", x\u0026y, x|y, x^y)\n\tfmt.Printf(\"左シフト 1\u003c\u003c4 = %d\\n\", 1\u003c\u003c4)\n}\n"
+    },
+    {
+     "category": "基本",
+     "title": "制御構文",
+     "path": "1_基本/05 制御構文",
+     "source": "// 制御構文（if・for・switch）\n//\n// Go の分岐とループはとてもシンプルです。ループは for だけ。\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\t// if：条件に丸括弧は不要。初期化文付きの if も書ける。\n\tif n := 7; n%2 == 0 {\n\t\tfmt.Println(n, \"は偶数\")\n\t} else {\n\t\tfmt.Println(n, \"は奇数\")\n\t}\n\n\t// for その1：カウンタ付きの基本形。\n\tsum := 0\n\tfor i := 1; i \u003c= 5; i++ {\n\t\tsum += i\n\t}\n\tfmt.Println(\"1..5 の合計:\", sum)\n\n\t// for その2：条件だけ書けば while 相当。\n\ti := 1\n\tfor i \u003c 100 {\n\t\ti *= 2\n\t}\n\tfmt.Println(\"100 を超える最小の 2 の累乗:\", i)\n\n\t// for その3：range でスライスを反復（添字と値を取り出す）。\n\tfor idx, v := range []string{\"a\", \"b\", \"c\"} {\n\t\tfmt.Printf(\"[%d]=%s \", idx, v)\n\t}\n\tfmt.Println()\n\n\t// switch：break は不要。条件を書かない switch は if-else の連鎖に便利。\n\tfor _, n := range []int{1, 2, 3} {\n\t\tswitch {\n\t\tcase n \u003c 2:\n\t\t\tfmt.Println(n, \"→ 小\")\n\t\tcase n \u003c 3:\n\t\t\tfmt.Println(n, \"→ 中\")\n\t\tdefault:\n\t\t\tfmt.Println(n, \"→ 大\")\n\t\t}\n\t}\n}\n"
+    },
+    {
+     "category": "基本",
+     "title": "関数",
+     "path": "1_基本/06 関数",
+     "source": "// 関数\n//\n// Go の関数は「複数の戻り値」「可変長引数」「名前付き戻り値」を持てます。\npackage main\n\nimport \"fmt\"\n\n// 複数の戻り値。エラーを 2 つ目に返すのが Go の定石。\nfunc divide(a, b int) (int, error) {\n\tif b == 0 {\n\t\treturn 0, fmt.Errorf(\"0 では割れません\")\n\t}\n\treturn a / b, nil\n}\n\n// 可変長引数（...int）。呼び出し側は任意個の引数を渡せる。\nfunc sum(nums ...int) int {\n\ttotal := 0\n\tfor _, n := range nums {\n\t\ttotal += n\n\t}\n\treturn total\n}\n\n// 名前付き戻り値。return だけで名前付きの値が返る。\nfunc split(total int) (a, b int) {\n\ta = total * 4 / 9\n\tb = total - a\n\treturn\n}\n\nfunc main() {\n\tq, err := divide(10, 3)\n\tfmt.Println(\"10/3 =\", q, \"err:\", err)\n\n\t_, err = divide(1, 0)\n\tfmt.Println(\"1/0 err:\", err)\n\n\tfmt.Println(\"合計:\", sum(1, 2, 3, 4, 5))\n\n\tx, y := split(18)\n\tfmt.Println(\"split(18) =\", x, y)\n}\n"
+    },
+    {
+     "category": "基本",
+     "title": "クロージャ",
+     "path": "1_基本/07 クロージャ",
+     "source": "// クロージャ\n//\n// 関数は値として扱えます。関数が外側の変数を「捕まえて」保持したものがクロージャです。\npackage main\n\nimport \"fmt\"\n\n// 呼ぶたびに 1 増える「カウンタ」を返す。count は各クロージャに固有。\nfunc counter() func() int {\n\tcount := 0\n\treturn func() int {\n\t\tcount++ // 外側の count を捕まえて更新し続ける\n\t\treturn count\n\t}\n}\n\nfunc main() {\n\t// 関数を変数に入れて使える。\n\tdouble := func(n int) int { return n * 2 }\n\tfmt.Println(\"double(21) =\", double(21))\n\n\t// counter() が返すクロージャは、それぞれ独立した count を持つ。\n\tc1 := counter()\n\tc2 := counter()\n\tfmt.Println(\"c1:\", c1(), c1(), c1()) // 1 2 3\n\tfmt.Println(\"c2:\", c2())             // 1（c1 とは別）\n}\n"
+    },
+    {
+     "category": "基本",
+     "title": "配列とスライス",
+     "path": "1_基本/08 配列とスライス",
+     "source": "// 配列とスライス\n//\n// 配列は固定長、スライスは可変長。実務ではほぼスライスを使います。\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\t// 配列：長さが型の一部（[3]int と [4]int は別の型）。\n\tvar arr [3]int\n\tarr[0], arr[1], arr[2] = 10, 20, 30\n\tfmt.Println(\"配列:\", arr, \"長さ:\", len(arr))\n\n\t// スライス：可変長。append で要素を追加できる。\n\ts := []int{1, 2, 3}\n\ts = append(s, 4, 5)\n\tfmt.Println(\"スライス:\", s, \"len:\", len(s), \"cap:\", cap(s))\n\n\t// スライス式 s[low:high]（high は含まない）。\n\tfmt.Println(\"s[1:3]:\", s[1:3])\n\n\t// make で長さ・容量を指定して作る。\n\tbuf := make([]string, 0, 3)\n\tfor _, w := range []string{\"go\", \"is\", \"fun\"} {\n\t\tbuf = append(buf, w)\n\t}\n\tfmt.Println(\"buf:\", buf)\n\n\t// スライスは参照的：元と一部を共有する点に注意。\n\ta := []int{1, 2, 3}\n\tb := a[:2]\n\tb[0] = 99\n\tfmt.Println(\"共有の例 a:\", a, \"b:\", b) // a[0] も 99 になる\n}\n"
+    },
+    {
+     "category": "基本",
+     "title": "マップ",
+     "path": "1_基本/09 マップ",
+     "source": "// マップ\n//\n// マップはキーと値の対応表（連想配列）です。\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\t// リテラルで初期化。\n\tage := map[string]int{\n\t\t\"Alice\": 30,\n\t\t\"Bob\":   25,\n\t}\n\n\t// 追加・更新・参照。\n\tage[\"Carol\"] = 28\n\tfmt.Println(\"Alice の年齢:\", age[\"Alice\"])\n\n\t// カンマ ok 記法：キーの有無を確認できる。\n\tif v, ok := age[\"Dave\"]; ok {\n\t\tfmt.Println(\"Dave:\", v)\n\t} else {\n\t\tfmt.Println(\"Dave は未登録\")\n\t}\n\n\t// 削除。\n\tdelete(age, \"Bob\")\n\n\t// fmt はマップをキー順にそろえて出力する（反復順は本来ランダム）。\n\tfmt.Println(\"現在のマップ:\", age)\n\tfmt.Println(\"人数:\", len(age))\n}\n"
+    },
+    {
+     "category": "基本",
+     "title": "構造体",
+     "path": "1_基本/10 構造体",
+     "source": "// 構造体\n//\n// 構造体は複数の値をひとまとめにした型です。\npackage main\n\nimport \"fmt\"\n\ntype Point struct {\n\tX, Y int\n}\n\ntype Person struct {\n\tName string\n\tAge  int\n\tHome Point // 構造体は入れ子にできる\n}\n\nfunc main() {\n\t// フィールド名を指定した初期化（推奨）。\n\tp := Person{\n\t\tName: \"Alice\",\n\t\tAge:  30,\n\t\tHome: Point{X: 1, Y: 2},\n\t}\n\n\t// フィールドへのアクセス・更新。\n\tp.Age++\n\tfmt.Println(\"名前:\", p.Name, \"年齢:\", p.Age)\n\tfmt.Println(\"家の座標:\", p.Home.X, p.Home.Y)\n\n\t// %+v はフィールド名付きで構造体を出力する。\n\tfmt.Printf(\"%+v\\n\", p)\n\n\t// ポインタ経由で更新すると元の値が変わる。\n\tmove(\u0026p.Home)\n\tfmt.Println(\"移動後:\", p.Home)\n}\n\nfunc move(pt *Point) {\n\tpt.X += 10\n\tpt.Y += 10\n}\n"
+    },
+    {
+     "category": "基本",
+     "title": "メソッド",
+     "path": "1_基本/11 メソッド",
+     "source": "// メソッド\n//\n// メソッドは特定の型に結び付いた関数です。レシーバに「値」を使うか\n// 「ポインタ」を使うかで、元の値を変更できるかが変わります。\npackage main\n\nimport \"fmt\"\n\ntype Counter struct {\n\tcount int\n}\n\n// 値レシーバ：コピーに対して働くので、元の値は変わらない（読み取り向き）。\nfunc (c Counter) Value() int {\n\treturn c.count\n}\n\n// ポインタレシーバ：元の値を変更できる（更新向き）。\nfunc (c *Counter) Increment() {\n\tc.count++\n}\n\nfunc main() {\n\tc := Counter{}\n\n\t// ポインタレシーバのメソッドは、変数に対してそのまま呼べる（自動で \u0026c になる）。\n\tc.Increment()\n\tc.Increment()\n\tc.Increment()\n\n\tfmt.Println(\"カウント:\", c.Value()) // 3\n\n\t// 値レシーバのメソッドは元を変えない例。\n\tc2 := c\n\tc2.Increment()\n\tfmt.Println(\"c:\", c.Value(), \"c2:\", c2.Value()) // 3 4\n}\n"
+    },
+    {
+     "category": "基本",
+     "title": "インターフェース",
+     "path": "1_基本/12 インターフェース",
+     "source": "// インターフェース\n//\n// インターフェースは「メソッドの集合」を表す型です。ある型がそのメソッドを\n// 実装していれば、明示的な宣言なしに自動でインターフェースを満たします\n//（構造的部分型）。これが Go の多態性（ポリモーフィズム）の基本です。\npackage main\n\nimport \"fmt\"\n\n// Shape は「Name() と Area() を持つ」という約束を表すインターフェース。\ntype Shape interface {\n\tName() string\n\tArea() float64\n}\n\ntype Rectangle struct{ W, H float64 }\ntype Circle struct{ R float64 }\n\n// Rectangle と Circle がそれぞれ Name()/Area() を実装する。\n// → どちらも自動的に Shape を満たす（\"implements\" と書く必要はない）。\nfunc (r Rectangle) Name() string  { return \"長方形\" }\nfunc (r Rectangle) Area() float64 { return r.W * r.H }\nfunc (c Circle) Name() string     { return \"円\" }\nfunc (c Circle) Area() float64    { return 3.14159 * c.R * c.R }\n\n// 引数を Shape 型にすると、具体的な型を問わず同じように扱える。\nfunc printArea(s Shape) {\n\tfmt.Printf(\"%s の面積 = %.2f\\n\", s.Name(), s.Area())\n}\n\nfunc main() {\n\t// 異なる型を同じ []Shape にまとめて扱える。\n\tshapes := []Shape{\n\t\tRectangle{W: 3, H: 4},\n\t\tCircle{R: 5},\n\t}\n\tfor _, s := range shapes {\n\t\tprintArea(s)\n\t}\n}\n"
+    }
+   ]
+  },
+  {
+   "name": "標準ライブラリ",
+   "lessons": [
+    {
+     "category": "標準ライブラリ",
+     "title": "fmt",
+     "path": "2_標準ライブラリ/01 fmt",
+     "source": "// fmt — 書式付き入出力\n//\n// Println / Printf / Sprintf と、代表的な「動詞（verb）」を確認します。\npackage main\n\nimport \"fmt\"\n\ntype Point struct{ X, Y int }\n\nfunc main() {\n\t// Println：スペース区切りで出力して改行。\n\tfmt.Println(\"値を並べる:\", 1, \"two\", 3.0, true)\n\n\tp := Point{X: 1, Y: 2}\n\n\t// 代表的な verb\n\tfmt.Printf(\"%%v  値      : %v\\n\", p)\n\tfmt.Printf(\"%%+v フィールド名付き: %+v\\n\", p)\n\tfmt.Printf(\"%%d 整数 / %%b 2進 / %%x 16進: %d %b %x\\n\", 255, 255, 255)\n\tfmt.Printf(\"%%s 文字列 / %%q 引用符付き: %s %q\\n\", \"go\", \"go\")\n\tfmt.Printf(\"%%f 小数 / %%.2f 桁指定: %f %.2f\\n\", 3.14159, 3.14159)\n\tfmt.Printf(\"%%T 型: %T %T\\n\", 42, \"hi\")\n\n\t// Sprintf：出力せず文字列として組み立てる。\n\tmsg := fmt.Sprintf(\"(%d, %d)\", p.X, p.Y)\n\tfmt.Println(\"Sprintf の結果:\", msg)\n}\n"
+    },
+    {
+     "category": "標準ライブラリ",
+     "title": "strings",
+     "path": "2_標準ライブラリ/02 strings",
+     "source": "// strings — 文字列操作\n//\n// 文字列の検索・置換・分割・連結などをまとめて提供する定番パッケージ。\npackage main\n\nimport (\n\t\"fmt\"\n\t\"strings\"\n)\n\nfunc main() {\n\ts := \"Hello, Gopher\"\n\n\tfmt.Println(\"大文字:\", strings.ToUpper(s))\n\tfmt.Println(\"含む(Go)?:\", strings.Contains(s, \"Go\"))\n\tfmt.Println(\"置換:\", strings.ReplaceAll(s, \"o\", \"0\"))\n\tfmt.Println(\"接頭辞(Hello)?:\", strings.HasPrefix(s, \"Hello\"))\n\n\t// 分割と連結\n\tparts := strings.Split(\"a,b,c\", \",\")\n\tfmt.Printf(\"分割: %v（%d 個）\\n\", parts, len(parts))\n\tfmt.Println(\"連結:\", strings.Join([]string{\"x\", \"y\", \"z\"}, \"-\"))\n\n\t// 前後の空白を除去\n\tfmt.Printf(\"トリム前後: %q\\n\", strings.TrimSpace(\"  padded  \"))\n\n\t// Builder は連結を効率よく行う（+ の繰り返しより速い）。\n\tvar b strings.Builder\n\tfor i := 0; i \u003c 3; i++ {\n\t\tb.WriteString(\"go\")\n\t}\n\tfmt.Println(\"Builder:\", b.String())\n}\n"
+    },
+    {
+     "category": "標準ライブラリ",
+     "title": "strconv",
+     "path": "2_標準ライブラリ/03 strconv",
+     "source": "// strconv — 文字列と数値の変換\n//\n// 文字列 ↔ 数値・真偽値の変換を行います。\npackage main\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n)\n\nfunc main() {\n\t// 文字列 → 数値。失敗するとエラーを返す。\n\tn, err := strconv.Atoi(\"42\")\n\tfmt.Println(\"Atoi(\\\"42\\\"):\", n, err)\n\n\t_, err = strconv.Atoi(\"abc\")\n\tfmt.Println(\"Atoi(\\\"abc\\\") のエラー:\", err)\n\n\t// 数値 → 文字列。\n\ts := strconv.Itoa(2026)\n\tfmt.Println(\"Itoa(2026):\", s, \"型は string\")\n\n\t// 浮動小数点・真偽値。\n\tf, _ := strconv.ParseFloat(\"3.14\", 64)\n\tb, _ := strconv.ParseBool(\"true\")\n\tfmt.Println(\"ParseFloat, ParseBool:\", f, b)\n\n\t// 基数を指定した変換（2 進数の文字列 → 10 進数）。\n\tv, _ := strconv.ParseInt(\"1010\", 2, 64)\n\tfmt.Println(\"2進 1010 =\", v)\n\n\t// Quote：エスケープ済みの引用符付き文字列。\n\tfmt.Println(\"Quote:\", strconv.Quote(\"行1\\n行2\"))\n}\n"
+    },
+    {
+     "category": "標準ライブラリ",
+     "title": "sort",
+     "path": "2_標準ライブラリ/04 sort",
+     "source": "// sort — 並べ替え\n//\n// スライスを昇順に並べたり、独自の基準で並べ替えたりできる。\npackage main\n\nimport (\n\t\"fmt\"\n\t\"sort\"\n)\n\nfunc main() {\n\t// 基本型は専用関数が用意されている。\n\tints := []int{3, 1, 4, 1, 5, 9, 2}\n\tsort.Ints(ints)\n\tfmt.Println(\"昇順:\", ints)\n\n\tstrs := []string{\"banana\", \"apple\", \"cherry\"}\n\tsort.Strings(strs)\n\tfmt.Println(\"辞書順:\", strs)\n\n\t// sort.Slice なら任意の基準で並べ替えられる（ここでは文字数の降順）。\n\twords := []string{\"go\", \"gopher\", \"js\", \"rust\"}\n\tsort.Slice(words, func(i, j int) bool {\n\t\treturn len(words[i]) \u003e len(words[j])\n\t})\n\tfmt.Println(\"長さの降順:\", words)\n\n\t// 昇順に並んだスライスなら二分探索できる。\n\tpos := sort.SearchInts(ints, 4)\n\tfmt.Printf(\"値 4 は位置 %d\\n\", pos)\n}\n"
+    },
+    {
+     "category": "標準ライブラリ",
+     "title": "time",
+     "path": "2_標準ライブラリ/05 time",
+     "source": "// time — 日付・時刻・期間\n//\n// 時刻の生成・加算・差分・整形を行います。\n// （実行結果を一定にするため、ここでは固定の日時を使います。）\npackage main\n\nimport (\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\t// 固定の日時を作る（time.Now() を使うと実行のたびに変わる）。\n\tt := time.Date(2026, time.July, 5, 14, 30, 0, 0, time.UTC)\n\n\t// Format は「参照時刻 2006-01-02 15:04:05」の並びで書式を指定する（Go 独特）。\n\tfmt.Println(\"整形:\", t.Format(\"2006-01-02 15:04:05\"))\n\tfmt.Println(\"和風:\", t.Format(\"2006年01月02日 15時04分\"))\n\n\t// Duration（期間）と加算。\n\td := 90 * time.Minute\n\tfmt.Println(\"90分後:\", t.Add(d).Format(\"15:04\"))\n\n\t// 2 時刻の差分。\n\tt2 := time.Date(2026, time.July, 5, 12, 0, 0, 0, time.UTC)\n\tfmt.Println(\"差:\", t.Sub(t2))\n\n\t// 各パーツの取り出し。\n\tfmt.Printf(\"年=%d 月=%d 日=%d 時=%d\\n\", t.Year(), t.Month(), t.Day(), t.Hour())\n}\n"
+    },
+    {
+     "category": "標準ライブラリ",
+     "title": "math と乱数",
+     "path": "2_標準ライブラリ/06 math と乱数",
+     "source": "// math と乱数（math / math/rand）\n//\n// 数学関数と擬似乱数を使います。\n// （結果を一定にするため、乱数は固定シードで生成します。）\npackage main\n\nimport (\n\t\"fmt\"\n\t\"math\"\n\t\"math/rand\"\n)\n\nfunc main() {\n\t// math：定数と関数。\n\tfmt.Printf(\"Pi=%.5f  E=%.5f\\n\", math.Pi, math.E)\n\tfmt.Printf(\"Sqrt(2)=%.4f  Pow(2,10)=%.0f\\n\", math.Sqrt(2), math.Pow(2, 10))\n\tfmt.Println(\"Abs(-5), Ceil(2.1), Floor(2.9):\", math.Abs(-5), math.Ceil(2.1), math.Floor(2.9))\n\tfmt.Println(\"Max, Min:\", math.Max(3, 7), math.Min(3, 7))\n\n\t// math/rand：固定シードにすると毎回同じ列になる（再現性のため）。\n\tr := rand.New(rand.NewSource(42))\n\tfmt.Println(\"0..99 の乱数:\", r.Intn(100), r.Intn(100), r.Intn(100))\n\n\t// シャッフルも rand で行える。\n\tnums := []int{1, 2, 3, 4, 5}\n\tr.Shuffle(len(nums), func(i, j int) { nums[i], nums[j] = nums[j], nums[i] })\n\tfmt.Println(\"シャッフル:\", nums)\n}\n"
+    },
+    {
+     "category": "標準ライブラリ",
+     "title": "errors",
+     "path": "2_標準ライブラリ/07 errors",
+     "source": "// errors — エラーの生成と判定\n//\n// エラー値の作り方、独自エラー型、ラップと一致判定を扱います。\npackage main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\n// 独自のエラー型：Error() string を実装すれば error として使える。\ntype ValidationError struct {\n\tField string\n}\n\nfunc (e *ValidationError) Error() string {\n\treturn fmt.Sprintf(\"%s が不正です\", e.Field)\n}\n\n// 比較の目印になる sentinel エラー。\nvar ErrEmpty = errors.New(\"空です\")\n\nfunc validate(name string) error {\n\tif name == \"\" {\n\t\t// %w でラップすると、元のエラーを保持したまま文脈を付けられる。\n\t\treturn fmt.Errorf(\"検証失敗: %w\", ErrEmpty)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\t// errors.New：シンプルなエラー。\n\tfmt.Println(\"New:\", errors.New(\"何かに失敗\"))\n\n\t// 独自エラー型。Error() の文言が使われる。\n\tvar verr error = \u0026ValidationError{Field: \"name\"}\n\tfmt.Println(\"独自型:\", verr)\n\n\t// ラップしたエラーは errors.Is で元の sentinel と一致判定できる。\n\terr := validate(\"\")\n\tfmt.Println(\"検証:\", err)\n\tif errors.Is(err, ErrEmpty) {\n\t\tfmt.Println(\"  → 原因は ErrEmpty\")\n\t}\n}\n"
+    },
+    {
+     "category": "標準ライブラリ",
+     "title": "JSON",
+     "path": "2_標準ライブラリ/08 JSON",
+     "source": "// JSON — encoding/json による変換\n//\n// 構造体と JSON を相互に変換する。Web API や設定ファイルで頻出。\npackage main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n)\n\n// 構造体タグ `json:\"...\"` で JSON 側のキー名を指定する。\ntype User struct {\n\tName string   `json:\"name\"`\n\tAge  int      `json:\"age\"`\n\tTags []string `json:\"tags\"`\n}\n\nfunc main() {\n\tu := User{Name: \"Alice\", Age: 30, Tags: []string{\"go\", \"web\"}}\n\n\t// 構造体 → JSON（Marshal）\n\tb, _ := json.Marshal(u)\n\tfmt.Println(\"JSON:\", string(b))\n\n\t// インデント付きで整形出力\n\tpretty, _ := json.MarshalIndent(u, \"\", \"  \")\n\tfmt.Println(string(pretty))\n\n\t// JSON → 構造体（Unmarshal）。\u0026v のようにポインタを渡す。\n\tvar v User\n\tjson.Unmarshal([]byte(`{\"name\":\"Bob\",\"age\":25,\"tags\":[\"cli\"]}`), \u0026v)\n\tfmt.Printf(\"復元: %+v\\n\", v)\n}\n"
+    },
+    {
+     "category": "標準ライブラリ",
+     "title": "regexp",
+     "path": "2_標準ライブラリ/09 regexp",
+     "source": "// regexp — 正規表現\n//\n// パターンによる検索・抽出・置換を行います。\n// パターンはバッククォート文字列で書くと、バックスラッシュをそのまま書けて便利です。\npackage main\n\nimport (\n\t\"fmt\"\n\t\"regexp\"\n)\n\nfunc main() {\n\t// MustCompile はパターンをコンパイルする（不正なら panic）。\n\tre := regexp.MustCompile(`\\d+`) // 1 個以上の数字\n\n\tfmt.Println(\"数字を含む?:\", re.MatchString(\"abc123\"))\n\tfmt.Println(\"最初の一致:\", re.FindString(\"a12b345\"))\n\tfmt.Println(\"全部の一致:\", re.FindAllString(\"a12b345c6\", -1))\n\tfmt.Println(\"置換:\", re.ReplaceAllString(\"a1b2c3\", \"#\"))\n\n\t// グループ () で部分を取り出す。\n\tmail := regexp.MustCompile(`(\\w+)@(\\w+)`)\n\tm := mail.FindStringSubmatch(\"user@example\")\n\t// m[0]=全体, m[1]=1つ目のグループ, m[2]=2つ目\n\tfmt.Printf(\"全体=%s ユーザー=%s ドメイン=%s\\n\", m[0], m[1], m[2])\n}\n"
+    }
+   ]
+  },
+  {
+   "name": "応用",
+   "lessons": [
+    {
+     "category": "応用",
+     "title": "型アサーションと型スイッチ",
+     "path": "3_応用/01 型アサーションと型スイッチ",
+     "source": "// 型アサーションと型スイッチ\n//\n// インターフェース値の「中身の具体的な型」を取り出す方法です。\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\t// interface{}（= any）はどんな値でも入る。\n\tvar v any = \"hello\"\n\n\t// 型アサーション：v.(T)。カンマ ok 記法で安全に判定できる。\n\tif s, ok := v.(string); ok {\n\t\tfmt.Println(\"文字列だった。長さ:\", len(s))\n\t}\n\tif _, ok := v.(int); !ok {\n\t\tfmt.Println(\"int ではない\")\n\t}\n\n\t// 型スイッチ：複数の型をまとめて振り分ける。\n\tfor _, x := range []any{42, \"go\", 3.14, true, []int{1, 2}} {\n\t\tfmt.Println(describe(x))\n\t}\n}\n\nfunc describe(i any) string {\n\tswitch v := i.(type) {\n\tcase int:\n\t\treturn fmt.Sprintf(\"int: %d\", v)\n\tcase string:\n\t\treturn fmt.Sprintf(\"string: %q\", v)\n\tcase float64:\n\t\treturn fmt.Sprintf(\"float64: %.2f\", v)\n\tdefault:\n\t\treturn fmt.Sprintf(\"その他: %T\", v)\n\t}\n}\n"
+    },
+    {
+     "category": "応用",
+     "title": "埋め込み",
+     "path": "3_応用/02 埋め込み",
+     "source": "// 埋め込み（構造体・インターフェースの合成）\n//\n// Go は継承の代わりに「埋め込み」で機能を再利用します。\n// 埋め込んだ型のフィールドやメソッドを、外側の型が自分のものとして使えます。\npackage main\n\nimport \"fmt\"\n\ntype Animal struct {\n\tName string\n}\n\nfunc (a Animal) Describe() string {\n\treturn a.Name + \" です\"\n}\n\n// Dog は Animal を「埋め込む」（フィールド名を書かない）。\ntype Dog struct {\n\tAnimal // 埋め込み\n\tBreed  string\n}\n\nfunc (d Dog) Bark() string {\n\treturn d.Name + \": ワン!\" // 埋め込んだ Animal の Name に直接アクセスできる\n}\n\nfunc main() {\n\td := Dog{\n\t\tAnimal: Animal{Name: \"レックス\"},\n\t\tBreed:  \"柴犬\",\n\t}\n\n\t// Animal のメソッドを Dog がそのまま持っているように呼べる。\n\tfmt.Println(d.Describe())\n\tfmt.Println(d.Bark())\n\tfmt.Println(\"犬種:\", d.Breed)\n\n\t// 埋め込んだフィールドは型名でも参照できる。\n\tfmt.Println(\"フルアクセス:\", d.Animal.Name)\n}\n"
+    },
+    {
+     "category": "応用",
+     "title": "エラーハンドリング",
+     "path": "3_応用/03 エラーハンドリング",
+     "source": "// エラーハンドリング\n//\n// Go はエラーを「戻り値」で表現します（例外機構ではない）。\n// 関数は error を返し、呼び出し側が明示的に確認するのが基本です。\npackage main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\n// sentinel エラー：比較の目印としてあらかじめ定義したエラー値。\nvar ErrNotFound = errors.New(\"見つかりません\")\n\nfunc find(id int) error {\n\tif id != 1 {\n\t\t// %w でラップすると、元のエラーを保持したまま文脈を追加できる。\n\t\treturn fmt.Errorf(\"id=%d の検索に失敗: %w\", id, ErrNotFound)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\tfor _, id := range []int{1, 2} {\n\t\terr := find(id)\n\t\tif err == nil {\n\t\t\tfmt.Printf(\"id=%d: OK\\n\", id)\n\t\t\tcontinue\n\t\t}\n\t\tfmt.Printf(\"id=%d: %v\\n\", id, err)\n\n\t\t// errors.Is で、ラップされた元エラーと一致するか判定できる。\n\t\tif errors.Is(err, ErrNotFound) {\n\t\t\tfmt.Println(\"  → 原因は ErrNotFound\")\n\t\t}\n\t}\n}\n"
+    },
+    {
+     "category": "応用",
+     "title": "defer と panic と recover",
+     "path": "3_応用/04 defer と panic と recover",
+     "source": "// defer / panic / recover\n//\n// defer は「関数を抜けるときに実行」する予約、panic は異常終了、\n// recover は panic を捕まえて復帰する仕組みです。\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\t// defer は後入れ先出し（LIFO）で、関数の最後にまとめて実行される。\n\t// 後片付け（ファイルを閉じる等）に使う。\n\tfmt.Println(\"--- defer の順序 ---\")\n\tdemoDefer()\n\n\t// panic を recover で捕まえ、エラーとして返す例。\n\tfmt.Println(\"--- recover ---\")\n\terr := safeDivide(10, 0)\n\tfmt.Println(\"結果:\", err)\n\tfmt.Println(\"プログラムは継続している\")\n}\n\nfunc demoDefer() {\n\tdefer fmt.Println(\"defer 1（最後に出る）\")\n\tdefer fmt.Println(\"defer 2\")\n\tfmt.Println(\"本体の処理\")\n}\n\n// panic しても recover で復帰し、error に変換して返す。\nfunc safeDivide(a, b int) (err error) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\terr = fmt.Errorf(\"復帰しました: %v\", r)\n\t\t}\n\t}()\n\tif b == 0 {\n\t\tpanic(\"ゼロ除算\")\n\t}\n\tfmt.Println(a / b)\n\treturn nil\n}\n"
+    },
+    {
+     "category": "応用",
+     "title": "goroutine と channel",
+     "path": "3_応用/05 goroutine と channel",
+     "source": "// goroutine と channel\n//\n// goroutine は軽量な並行実行の単位、channel はその間でデータを受け渡す通信路です。\n// go キーワードで関数を並行に走らせます。\npackage main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n)\n\nfunc main() {\n\tjobs := []int{2, 3, 4}\n\n\t// バッファ付き channel に各 goroutine の結果を集める。\n\tresults := make(chan int, len(jobs))\n\n\t// WaitGroup で「全 goroutine の完了」を待つ。\n\tvar wg sync.WaitGroup\n\tfor _, n := range jobs {\n\t\twg.Add(1)\n\t\tgo func(x int) { // x を引数で渡すのが定石（ループ変数の共有を避ける）\n\t\t\tdefer wg.Done()\n\t\t\tresults \u003c- x * x\n\t\t}(n)\n\t}\n\n\twg.Wait()      // 全部終わるまで待つ\n\tclose(results) // もう送らないので閉じる\n\n\t// 閉じた channel は range で最後まで読み切れる。\n\tsum := 0\n\tfor r := range results {\n\t\tsum += r\n\t}\n\t// 実行順序は毎回変わるが、合計は一定：4 + 9 + 16 = 29\n\tfmt.Println(\"二乗の合計:\", sum)\n}\n"
+    },
+    {
+     "category": "応用",
+     "title": "select",
+     "path": "3_応用/06 select",
+     "source": "// select — 複数チャネルの待ち受け\n//\n// select は複数の channel 操作のうち、準備ができたものを 1 つ選んで実行します。\n// タイムアウトやキャンセルの実装によく使います。\npackage main\n\nimport (\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\tfast := make(chan string)\n\tslow := make(chan string)\n\n\t// 2 つの goroutine が別々のタイミングで結果を送る。\n\tgo func() { time.Sleep(20 * time.Millisecond); fast \u003c- \"fast の結果\" }()\n\tgo func() { time.Sleep(200 * time.Millisecond); slow \u003c- \"slow の結果\" }()\n\n\t// 先に届いた方を受け取る。両方来るまで 2 回ループ。\n\tfor i := 0; i \u003c 2; i++ {\n\t\tselect {\n\t\tcase v := \u003c-fast:\n\t\t\tfmt.Println(\"受信:\", v)\n\t\tcase v := \u003c-slow:\n\t\t\tfmt.Println(\"受信:\", v)\n\t\tcase \u003c-time.After(time.Second):\n\t\t\tfmt.Println(\"タイムアウト\")\n\t\t}\n\t}\n\n\t// time.After を使った単独のタイムアウト例。\n\tdone := make(chan bool)\n\tgo func() { time.Sleep(10 * time.Millisecond); done \u003c- true }()\n\tselect {\n\tcase \u003c-done:\n\t\tfmt.Println(\"処理完了\")\n\tcase \u003c-time.After(100 * time.Millisecond):\n\t\tfmt.Println(\"時間切れ\")\n\t}\n}\n"
+    },
+    {
+     "category": "応用",
+     "title": "sync",
+     "path": "3_応用/07 sync",
+     "source": "// sync — 並行処理の同期\n//\n// 複数の goroutine を安全に協調させる道具です。\n// WaitGroup（完了待ち）, Mutex（排他制御）, Once（一度だけ実行）を扱います。\npackage main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n)\n\nfunc main() {\n\t// Mutex：複数 goroutine から同じ変数を安全に更新する。\n\tvar mu sync.Mutex\n\tcounter := 0\n\n\t// Once：何度呼ばれても初期化を 1 回だけ実行する。\n\tvar once sync.Once\n\n\t// WaitGroup：全 goroutine の完了を待つ。\n\tvar wg sync.WaitGroup\n\tfor i := 0; i \u003c 100; i++ {\n\t\twg.Add(1)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tonce.Do(func() { fmt.Println(\"初期化は一度だけ\") })\n\n\t\t\tmu.Lock() // ロックしてから更新（競合を防ぐ）\n\t\t\tcounter++\n\t\t\tmu.Unlock()\n\t\t}()\n\t}\n\twg.Wait()\n\n\t// Mutex で守ったので、必ず 100 になる。\n\tfmt.Println(\"最終カウント:\", counter)\n}\n"
+    },
+    {
+     "category": "応用",
+     "title": "ジェネリクス",
+     "path": "3_応用/08 ジェネリクス",
+     "source": "// ジェネリクス（型パラメータ）\n//\n// 型パラメータを使うと、型に依存しない汎用的な関数や型を書けます（Go 1.18 以降）。\npackage main\n\nimport \"fmt\"\n\n// [T any] が型パラメータ。any 制約は「どんな型でも受け取れる」。\n// 条件に合う要素だけを残す汎用フィルタ。T は呼び出しから推論される。\nfunc Filter[T any](s []T, keep func(T) bool) []T {\n\tvar r []T\n\tfor _, v := range s {\n\t\tif keep(v) {\n\t\t\tr = append(r, v)\n\t\t}\n\t}\n\treturn r\n}\n\n// 制約は自分で定義できる。~int は「基底型が int の型すべて」を表す。\ntype Number interface {\n\t~int | ~float64\n}\n\n// Number を満たす型なら何でも合計できる。\nfunc Sum[T Number](s []T) T {\n\tvar total T\n\tfor _, v := range s {\n\t\ttotal += v\n\t}\n\treturn total\n}\n\nfunc main() {\n\tnums := []int{1, 2, 3, 4, 5, 6}\n\n\t// 同じ Filter が int にも string にも使える（型ごとに書かなくてよい）。\n\tevens := Filter(nums, func(n int) bool { return n%2 == 0 })\n\tfmt.Println(\"偶数:\", evens)\n\n\twords := []string{\"go\", \"gopher\", \"js\", \"rust\"}\n\tlong := Filter(words, func(w string) bool { return len(w) \u003e= 3 })\n\tfmt.Println(\"3文字以上:\", long)\n\n\t// 制約付きジェネリクス。int でも float64 でも同じ Sum で合計できる。\n\tfmt.Println(\"int の合計:\", Sum(nums))\n\tfmt.Println(\"float の合計:\", Sum([]float64{1.5, 2.5}))\n}\n"
+    }
+   ]
+  }
+ ]
+}
