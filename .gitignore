@@ -1,0 +1,18 @@
+# ビルド成果物
+/build/bin/
+/frontend/dist/
+
+# 依存
+/frontend/node_modules/
+node_modules/
+
+# Wails 自動生成バインディング（ビルド時に再生成）
+/frontend/wailsjs/
+
+# 実行ファイル
+*.exe
+
+# 署名資材（絶対にコミットしない）
+/certs/
+
+tmp/

@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+
+/* Tailwind 4 に flowbite-svelte のクラスをスキャンさせる */
+@source '../node_modules/flowbite-svelte/dist';
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  color: #e5e7eb;
+  background: #1e1e1e;
+  overflow: hidden;
+}

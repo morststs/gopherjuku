@@ -1,0 +1,73 @@
+<script>
+  // 右ペイン: 実行結果（標準出力・エラー・ステータス）。
+  let { output = '', status = 'idle', message = '' } = $props()
+
+  // 出力テキストの文字サイズ（Ctrl+マウスホイールで変更）。
+  let fontSize = $state(13)
+
+  function onWheel(e) {
+    if (!e.ctrlKey) return
+    e.preventDefault() // ブラウザ/WebView 全体のズームを抑止し、出力だけ拡大縮小する
+    const next = fontSize + (e.deltaY < 0 ? 1 : -1)
+    fontSize = Math.max(8, Math.min(40, next))
+  }
+</script>
+
+<div class="output" onwheel={onWheel}>
+  <div class="out-head">実行結果</div>
+
+  {#if message}
+    <div
+      class="banner"
+      class:error={status === 'error'}
+      class:busy={status === 'running'}
+      style="font-size: {fontSize}px"
+    >
+      {message}
+    </div>
+  {/if}
+
+  <pre class="console" style="font-size: {fontSize}px">{output}</pre>
+</div>
+
+<style>
+  .output {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #1e1e1e;
+    border-left: 1px solid #333;
+  }
+  .out-head {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    padding: 8px 12px;
+    border-bottom: 1px solid #333;
+  }
+  .banner {
+    padding: 8px 12px;
+    background: #2d2d30;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+  }
+  .banner.busy {
+    color: #93c5fd;
+  }
+  .banner.error {
+    background: #3b1d1d;
+    color: #fca5a5;
+  }
+  .console {
+    margin: 0;
+    padding: 12px;
+    flex: 1;
+    overflow: auto;
+    font-family: 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #d4d4d4;
+  }
+</style>
