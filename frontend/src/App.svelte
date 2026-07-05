@@ -4,7 +4,7 @@
   import LessonTree from './LessonTree.svelte'
   import Editor from './Editor.svelte'
   import Output from './Output.svelte'
-  import { fetchTree, fetchSource, run as runBackend } from './wails.js'
+  import { fetchTree, fetchSource, run as runBackend, prewarm } from './wails.js'
 
   let categories = $state([])
   let currentPath = $state(null)
@@ -20,6 +20,7 @@
   const busy = $derived(status === 'running')
 
   onMount(async () => {
+    prewarm() // ブラウザ版: 実行環境(wasm)とレッスンの読み込みを先行開始
     categories = await fetchTree()
     const first = categories[0]?.lessons?.[0]
     if (first) await select(first.path)

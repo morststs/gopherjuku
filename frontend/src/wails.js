@@ -1,59 +1,75 @@
-// バックエンド（Go / Wails）呼び出しのラッパー。
+// バックエンド呼び出しのラッパー。2 つの動作モードに対応する:
 //
-// Wails は実行時に window.go.main.App.* を注入する。ブラウザ単体（wails なし）の
-// UI 開発時は window.go が無いので、簡易フォールバックで最低限動くようにしている。
-// これにより wailsjs の自動生成バインディングに依存せず vite build が通る。
+//   1. デスクトップ（Wails）: window.go.main.App.* を呼ぶ。
+//   2. ブラウザ（GitHub Pages・静的配信）: バックエンドが無いので、
+//      レッスンは静的 JSON（lessons.json）から、実行/整形は Go を wasm に
+//      した Web Worker（webRunner.js）から供給する。
+//
+// どちらのモードかは window.go の有無で判定する。
 
 const app = () => (typeof window !== 'undefined' ? window.go?.main?.App : undefined)
+
+// ---- ブラウザ版: レッスンの静的データ ----
+let lessonsPromise = null
+function loadLessons() {
+  if (!lessonsPromise) {
+    lessonsPromise = fetch(import.meta.env.BASE_URL + 'lessons.json').then((r) => r.json())
+  }
+  return lessonsPromise
+}
 
 /** 左ペイン用のカテゴリー/題ツリーを取得する。 */
 export async function fetchTree() {
   const b = app()
   if (b?.Tree) return b.Tree()
-  // フォールバック（ブラウザ単体）
-  return [
-    { name: '基本', lessons: [{ category: '基本', title: 'ハローワールド', path: '基本/ハローワールド' }] },
-  ]
+  const data = await loadLessons()
+  return (data.categories || []).map((c) => ({
+    name: c.name,
+    lessons: (c.lessons || []).map((l) => ({ category: l.category, title: l.title, path: l.path })),
+  }))
 }
 
 /** レッスンの Go ソースを取得する。 */
 export async function fetchSource(path) {
   const b = app()
   if (b?.Source) return b.Source(path)
-  return [
-    'package main',
-    '',
-    'import "fmt"',
-    '',
-    'func main() {',
-    '\tfmt.Println("Hello, Gopherjuku!")',
-    '}',
-    '',
-  ].join('\n')
+  const data = await loadLessons()
+  for (const c of data.categories || []) {
+    for (const l of c.lessons || []) {
+      if (l.path === path) return l.source
+    }
+  }
+  return ''
 }
 
 /**
- * Go ソースを yaegi インタプリタ（バックエンドの子プロセス）で実行し、
- * 標準出力とエラーを返す。
+ * Go ソースを実行し、標準出力とエラーを返す。
  * @returns {Promise<{success:boolean, output:string, error:string}>}
  */
 export async function run(source) {
   const b = app()
   if (b?.Run) return b.Run(source)
-  return {
-    success: false,
-    output: '',
-    error: '（ブラウザ単体モード）バックエンド未接続のため実行できません。`wails dev` またはビルドした exe で起動してください。',
-  }
+  const { webRun } = await import('./webRunner.js')
+  return webRun(source)
 }
 
 /**
- * Go ソースを gofmt 整形する（エディタの Shift+Alt+F から呼ばれる）。
+ * Go ソースを gofmt 整形する（Shift+Alt+F から呼ばれる）。
  * @returns {Promise<{success:boolean, formatted:string, error:string}>}
  */
 export async function format(source) {
   const b = app()
   if (b?.Format) return b.Format(source)
-  // ブラウザ単体モードでは整形せず、そのまま返す。
-  return { success: false, formatted: source, error: '（ブラウザ単体モード）整形はバックエンドが必要です。' }
+  const { webFormat } = await import('./webRunner.js')
+  return webFormat(source)
+}
+
+/**
+ * ブラウザ版で、実行環境（wasm）とレッスンの読み込みを先行開始する。
+ * デスクトップ版では何もしない。
+ */
+export function prewarm() {
+  if (app()) return
+  loadLessons()
+  import('./webRunner.js').then((m) => m.ensureReady())
 }

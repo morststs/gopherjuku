@@ -153,6 +153,21 @@ gopherjuku/
      可能性」を返す。インプロセスの goroutine では強制停止できないため、この子プロセス方式を採る。
 6. フロントは `Output`/`Error` を右ペインに表示するだけ（**JS の実行・iframe は無し**）。
 
+## ブラウザ版（GitHub Pages）
+
+同じフロントエンドを、バックエンド無しの静的サイトとしても配信する
+（公開先: https://morststs.github.io/gopherjuku/ ・`gh-pages` ブランチ）。
+
+- **実行/整形**: yaegi と `go/format` を **WebAssembly 化**（`web/wasm/`・js/wasm 専用の
+  入れ子モジュール）し、`frontend/public/worker.js`（Web Worker）内で動かす。無限ループは
+  ワーカーを terminate して停止（デスクトップの子プロセス kill に相当）。
+- **レッスン**: `cmd/gen-lessons` が `_contents/` を静的 JSON（`lessons.json`）に書き出す。
+- **切り替え**: `frontend/src/wails.js` が `window.go` の有無でデスクトップ/ブラウザを判定。
+  ブラウザ時のみ `webRunner.js` を動的 import。
+- **注意**: `main.wasm`/`wasm_exec.js`/`lessons.json` は生成物（`.gitignore` 済み）。
+  デスクトップ exe に混入させないため、`wails build` 前に `frontend/public/` から消す
+  （手順は SKILLS #9）。ビルドは Pages 用に `vite build --base=/gopherjuku/`。
+
 ## ビルド注意点（svelte.config.js）
 
 `frontend/svelte.config.js` は **必須**。`vitePreprocess({ script: true })` を有効化する。

@@ -12,6 +12,12 @@ node_modules/
 # 実行ファイル
 *.exe
 
+# ブラウザ版（GitHub Pages）のビルド時生成物（worker.js と .nojekyll はソースとして追跡）
+/frontend/public/main.wasm
+/frontend/public/wasm_exec.js
+/frontend/public/lessons.json
+/web/wasm/main.wasm
+
 # 署名資材（絶対にコミットしない）
 /certs/
 

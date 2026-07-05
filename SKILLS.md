@@ -20,6 +20,7 @@
 | 6 | ★Wails バインディング再生成 | Go の公開メソッドを変えたとき |
 | 7 | テストを実行する | 変更後の確認 |
 | 8 | アイコンを作り直す | ロゴ/アイコンを変えるとき |
+| 9 | ブラウザ版をビルド・公開する | GitHub Pages を更新するとき |
 
 ---
 
@@ -142,3 +143,36 @@ podman run --rm --network=host -v "$PWD":/app:Z -w /app wails-dev wails build -p
 
 > アプリ内トップバーのロゴは `frontend/src/App.svelte` のインライン SVG。アイコンを変えたら
 > こちらも合わせると見た目が揃う。
+
+---
+
+## 9. ブラウザ版をビルド・公開する（GitHub Pages）
+
+ブラウザ版は Go の実行を **yaegi の WebAssembly**（`web/wasm/`）で行い、レッスンは静的 JSON
+（`cmd/gen-lessons` が生成）から供給する。実行は `frontend/public/worker.js`（Web Worker）内で
+動き、タイムアウト時はワーカーごと停止する。
+
+ビルド手順（コンテナ内、リポジトリルート）:
+
+```bash
+# 1. wasm ランナーをビルド（js/wasm・入れ子モジュール）
+( cd web/wasm && GOOS=js GOARCH=wasm go mod tidy \
+  && GOOS=js GOARCH=wasm go build -ldflags="-s -w" -o main.wasm . )
+
+# 2. アセットを frontend/public/ に配置（生成物は .gitignore 済み）
+cp web/wasm/main.wasm frontend/public/main.wasm
+cp "$(go env GOROOT)"/misc/wasm/wasm_exec.js frontend/public/wasm_exec.js   # 版により lib/wasm
+go run ./cmd/gen-lessons frontend/public/lessons.json
+
+# 3. Pages の base 付きでビルド
+( cd frontend && ./node_modules/.bin/vite build --base=/gopherjuku/ )
+
+# 4. frontend/dist/ を gh-pages ブランチに push（.nojekyll を含める）
+```
+
+公開先: **https://morststs.github.io/gopherjuku/**（Pages ソース = `gh-pages` ブランチ / root）。
+
+> 注意: `main.wasm`・`wasm_exec.js`・`lessons.json` は **ビルド生成物**（`.gitignore` 済み）。
+> **デスクトップ版の exe に混入させない**よう、`wails build` の前に `frontend/public/` から
+> これらを削除すること（残っていると exe に数十MBの wasm が埋め込まれる）。
+> `worker.js` と `.nojekyll` はソースとして追跡する。
