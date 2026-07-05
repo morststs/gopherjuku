@@ -156,7 +156,7 @@ gopherjuku/
 ## ブラウザ版（GitHub Pages）
 
 同じフロントエンドを、バックエンド無しの静的サイトとしても配信する
-（公開先: https://morststs.github.io/gopherjuku/ ・`gh-pages` ブランチ）。
+（公開先: https://gopherjuku.e17.click/ ・`gh-pages` ブランチ）。
 
 - **実行/整形**: yaegi と `go/format` を **WebAssembly 化**（`web/wasm/`・js/wasm 専用の
   入れ子モジュール）し、`frontend/public/worker.js`（Web Worker）内で動かす。無限ループは
@@ -166,7 +166,11 @@ gopherjuku/
   ブラウザ時のみ `webRunner.js` を動的 import。
 - **注意**: `main.wasm`/`wasm_exec.js`/`lessons.json` は生成物（`.gitignore` 済み）。
   デスクトップ exe に混入させないため、`wails build` 前に `frontend/public/` から消す
-  （手順は SKILLS #9）。ビルドは Pages 用に `vite build --base=/gopherjuku/`。
+  （手順は SKILLS #9）。
+- **base は `/`**（デフォルト）でビルドすること。カスタムドメイン `gopherjuku.e17.click` は
+  ルートで配信するため。`--base=/gopherjuku/` にすると `index.html` が `/gopherjuku/...` を
+  参照して 404 → 真っ白になる（過去に発生）。`frontend/public/CNAME` は追跡ファイルで、
+  gh-pages への force push でも消えないよう dist に必ず含める。
 
 ## ビルド注意点（svelte.config.js）
 

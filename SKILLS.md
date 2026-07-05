@@ -164,13 +164,19 @@ cp web/wasm/main.wasm frontend/public/main.wasm
 cp "$(go env GOROOT)"/misc/wasm/wasm_exec.js frontend/public/wasm_exec.js   # 版により lib/wasm
 go run ./cmd/gen-lessons frontend/public/lessons.json
 
-# 3. Pages の base 付きでビルド
-( cd frontend && ./node_modules/.bin/vite build --base=/gopherjuku/ )
+# 3. ビルド（base はデフォルトの "/"。カスタムドメインはルートで配信されるため）
+( cd frontend && ./node_modules/.bin/vite build )
 
-# 4. frontend/dist/ を gh-pages ブランチに push（.nojekyll を含める）
+# 4. frontend/dist/ を gh-pages ブランチに push（.nojekyll と CNAME を含める）
 ```
 
-公開先: **https://morststs.github.io/gopherjuku/**（Pages ソース = `gh-pages` ブランチ / root）。
+公開先: **https://gopherjuku.e17.click/**（Pages ソース = `gh-pages` ブランチ / root、カスタムドメイン）。
+
+> **base は必ず `/`**。カスタムドメイン（`gopherjuku.e17.click`）はルートで配信するので、
+> `--base=/gopherjuku/` にすると `index.html` が `/gopherjuku/assets/...` を参照して 404 になり
+> **真っ白**になる。以前これで表示不能になった。
+> **CNAME**（`frontend/public/CNAME` = `gopherjuku.e17.click`）は追跡ファイル。gh-pages への
+> force push でも消えないよう dist に必ず含めること（消えるとカスタムドメインが外れる）。
 
 > 注意: `main.wasm`・`wasm_exec.js`・`lessons.json` は **ビルド生成物**（`.gitignore` 済み）。
 > **デスクトップ版の exe に混入させない**よう、`wails build` の前に `frontend/public/` から
