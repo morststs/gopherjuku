@@ -74,12 +74,8 @@
 </script>
 
 <div class="app">
-  <header class="topbar">
-    <!-- ツールバーは実行ボタンのみ（アプリ名は OS のタイトルバーに表示）。 -->
-    <span class="spacer"></span>
-    <button class="run" onclick={run} disabled={busy}>▶ 実行</button>
-  </header>
-
+  <!-- 全幅の上部バーは廃止。実行ボタンは実行結果ペインの上（Output のヘッダ）だけに置き、
+       左・中央ペインは最上部から始める。 -->
   <div class="panes" style="grid-template-columns: {leftW}px 6px 1fr 6px {rightW}px;">
     <aside class="pane left">
       <LessonTree {categories} {currentPath} onselect={select} />
@@ -94,7 +90,7 @@
     <div class="gutter" onpointerdown={(e) => startDrag('right', e)}></div>
 
     <section class="pane right">
-      <Output {output} {status} {message} />
+      <Output {output} {status} {message} onrun={run} {busy} />
     </section>
   </div>
 </div>
@@ -104,36 +100,6 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-  }
-  .topbar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    height: 44px;
-    padding: 0 14px;
-    background: #323233;
-    border-bottom: 1px solid #444;
-    flex: none;
-  }
-  .spacer {
-    flex: 1;
-  }
-  .run {
-    background: #16a34a;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 6px 16px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .run:hover:not(:disabled) {
-    background: #15803d;
-  }
-  .run:disabled {
-    opacity: 0.5;
-    cursor: default;
   }
   .panes {
     flex: 1;
